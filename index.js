@@ -9,8 +9,11 @@ const handlers = {
     '/api/articles/create': create,
     '/api/articles/delete': _delete,
     '/api/articles/update': update,
+    '/api/comments/create': createComment,
+    '/api/comments/delete': deleteComment
 };
 const JSONFile = 'articles.json';
+const ErrorObject = { code: 400, message: 'Request Invalid' };
 let articles = [];
 fs.readFile(JSONFile, (err, text) => {
     articles = JSON.parse(text);
@@ -66,7 +69,7 @@ function read(req, res, payload, cb) {
     if ((article = articles.find(i => i.id == payload.id)) != undefined)
         cb(null, article);
     else
-        cb({ code: 101, message: 'Неправильный Id' });
+        cb(ErrorObject);
 }
 function create(req, res, payload, cb) {
     payload.id = Date.now();
@@ -82,19 +85,44 @@ function update(req, res, payload, cb) {
         cb(null, articles[index]);
     }
     else
-        cb({ code: 101, message: 'Неправильный Id' });
+        cb(ErrorObject);
 }
 function _delete(req, res, payload, cb) {
     let index;
     if ((index = articles.findIndex(i => i.id == payload.id)) != -1) {
-        articles.splice(index,1);
+        articles.splice(index, 1);
         ChangeArticles();
         cb(null, articles);
     }
     else
-        cb({ code: 101, message: 'Неправильный Id' });
+        cb(ErrorObject);
+}
+function createComment(req, res, payload, cb) {
+    let index;
+    if ((index = articles.findIndex(i => i.id == payload.articleId)) != -1) {
+        payload.id = Date.now();
+        articles[index].comments.push(payload);
+        ChangeArticles();
+        cb(null, articles);
+    }
+    else
+        cb(ErrorObject);
+}
+function deleteComment(req, res, payload, cb) {
+    let index, indexOfComment;
+    if ((index = articles.findIndex(i => i.id == payload.articleId)) != -1 &&
+        (indexOfComment = articles[index].comments.findIndex(i => i.id == payload.id)) != -1) {
+        articles[index].comments.splice(indexOfComment, 1);
+        ChangeArticles();
+        cb(null, articles);
+    }
+    else
+        cb(ErrorObject);
 }
 function ChangeArticles() {
     const file = fs.createWriteStream(JSONFile);
     file.write(JSON.stringify(articles));
+}
+function log(url) {
+    const file = fs.createWriteStream();
 }
