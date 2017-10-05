@@ -14,13 +14,16 @@ const handlers = {
 };
 const JSONFile = 'articles.json';
 const ErrorObject = { code: 400, message: 'Request Invalid' };
-let articles = [];
+let articles = require('./'+JSONFile);
+const logfile = fs.createWriteStream('logfile.log');
+/*
 fs.readFile(JSONFile, (err, text) => {
     articles = JSON.parse(text);
 });
+*/
 const server = http.createServer((req, res) => {
-    //console.log(articles);
     parseBodyJson(req, (err, payload) => {
+        console.log(articles);
         const handler = getHandler(req.url);
         handler(req, res, payload, (err, result) => {
             if (err) {
@@ -62,12 +65,16 @@ function parseBodyJson(req, cb) {
 }
 
 function readAll(req, res, payload, cb) {
+    log('/api/articles/readall', payload);
     cb(null, articles);
 }
 function read(req, res, payload, cb) {
     let article;
     if ((article = articles.find(i => i.id == payload.id)) != undefined)
-        cb(null, article);
+        {
+            log('/api/articles/read', payload);
+            cb(null, article);
+        }
     else
         cb(ErrorObject);
 }
@@ -75,6 +82,7 @@ function create(req, res, payload, cb) {
     payload.id = Date.now();
     articles.push(payload);
     ChangeArticles();
+    log('/api/articles/create', payload);
     cb(null, payload);
 }
 function update(req, res, payload, cb) {
@@ -82,6 +90,7 @@ function update(req, res, payload, cb) {
     if ((index = articles.findIndex(i => i.id == payload.id)) != -1) {
         articles.splice(index, 1, payload);
         ChangeArticles();
+        log('/api/articles/update', payload);
         cb(null, articles[index]);
     }
     else
@@ -92,6 +101,7 @@ function _delete(req, res, payload, cb) {
     if ((index = articles.findIndex(i => i.id == payload.id)) != -1) {
         articles.splice(index, 1);
         ChangeArticles();
+        log('/api/articles/delete', payload);  
         cb(null, articles);
     }
     else
@@ -103,6 +113,7 @@ function createComment(req, res, payload, cb) {
         payload.id = Date.now();
         articles[index].comments.push(payload);
         ChangeArticles();
+        log('/api/comments/create', payload);
         cb(null, articles);
     }
     else
@@ -114,6 +125,7 @@ function deleteComment(req, res, payload, cb) {
         (indexOfComment = articles[index].comments.findIndex(i => i.id == payload.id)) != -1) {
         articles[index].comments.splice(indexOfComment, 1);
         ChangeArticles();
+        log('/api/comments/delete', payload);
         cb(null, articles);
     }
     else
@@ -123,6 +135,9 @@ function ChangeArticles() {
     const file = fs.createWriteStream(JSONFile);
     file.write(JSON.stringify(articles));
 }
-function log(url) {
-    const file = fs.createWriteStream();
+function log(url, data) {
+    const current = new Date();
+    logfile.write('\t'+ (current.getDay()+1) + '.' + (current.getMonth()+1) + '.' + current.getFullYear() + ' ' + current.getHours() + ':'+ current.getMinutes() + ':' + current.getSeconds()+'\n'+
+                  'URL: ' + url + '\n'+
+                  'Request:\n' + JSON.stringify(data) + '\n----------------------------------\n');
 }
