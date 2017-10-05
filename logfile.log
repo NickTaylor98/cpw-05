@@ -1,15 +1,17 @@
-	5.10.2017 23:13:42
-URL: /api/articles/readall
+	6.10.2017 0:22:29
+URL: /api/articles/delete
 Request:
-{"id":2,"articleId":2}
+{"id":1507238465574}
 ----------------------------------
-	5.10.2017 23:14:29
-URL: /api/articles/read
+	6.10.2017 0:25:42
+URL: /api/articles/delete
 Request:
-{"id":2}
+{"id":1507238679206}
 ----------------------------------
-	5.10.2017 23:17:12
-URL: /api/articles/read
+4-10-2017","author":"Nick Taylor","comments":[{"id":1,"articleId":3,"text":"Как такое возможно????","date":"04-10-2017","author":"Nick Taylor"},{"id":2,"articleId":3,"text":"Молчи, а то и тебя выгоню","date":"04-10-2017","author":"Шиман Д.В"},{"id":3,"articleId":3,"text":"Всё, я молчу","date":"04-10-2017","author":"Nick Taylor"}]}
+----------------------------------
+	6.10.2017 0:24:42
+URL: /api/articles/create
 Request:
-{"id":2}
+{"id":1507238679206,"title":"Лекция по ПСП","text":"Шиман выгнал только одного (!!!!!!!!) человека с лекции","date":"04-10-2017","author":"Nick Taylor","comments":[{"id":1,"articleId":3,"text":"Как такое возможно????","date":"04-10-2017","author":"Nick Taylor"},{"id":2,"articleId":3,"text":"Молчи, а то и тебя выгоню","date":"04-10-2017","author":"Шиман Д.В"},{"id":3,"articleId":3,"text":"Всё, я молчу","date":"04-10-2017","author":"Nick Taylor"}]}
 ----------------------------------
